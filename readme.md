@@ -12,12 +12,18 @@ Lab 3
 Implementation Exercises
 
 Option A: Pokédex & Battle Simulator (Continuing Project)
+
 Goal: Evolve your Pokédex by creating a battle simulator that uses advanced parameter passing to manage battles and analyze Pokémon data efficiently.
+
 Setup: Create a new class BattleSimulator that implements the IBattleSimulator interface provided below.
+[IBattleSimulator](IBattleSimulator.cs)
 
 Option B: Music Playlist Manager (Standalone Project)
+
 Goal: Build a robust playlist manager from scratch, focusing on safe and efficient data handling using advanced parameter passing techniques.
+
 Setup: Create a Song class (with properties like Title, Artist, DurationInSeconds) and then create a PlaylistManager class that implements the IPlaylistManager interface provided below.
+[PlaylistManager](PlaylistManager.cs)
 
 Presentation
 ---
