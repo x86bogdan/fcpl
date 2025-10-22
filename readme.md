@@ -48,9 +48,9 @@ Create a new class StandardPokemon that inherits from BasePokemon. override the 
 
 Create another class LegendaryPokemon that also inherits from BasePokemon.
 
-Add a new property: string MythicalRegion.
+Add a new property: string SpecialType.
 
-override the DisplayInfo() method to also include the mythical and legendary status, perhaps with a special border like *** MEWTWO ***.
+override the DisplayInfo() method to also include the SpecialType status, perhaps with a special border like *** MEWTWO ***.
 
 Polymorphism in Action: In your main program, create a List<BasePokemon>. Add a StandardPokemon (like Pikachu) and a LegendaryPokemon (like Mewtwo) to the list. Loop through the list and call DisplayInfo() on each one, observing the different outputs.
 
