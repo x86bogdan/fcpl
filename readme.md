@@ -68,3 +68,47 @@ Loop through your cart and sum the Price of all products, then loop again and su
 Presentation
 ---
 https://gamma.app/docs/OOP-Superpowers-Inheritance-Polymorphism-v5s2a2wx61zxaau
+
+
+Lab 5
+===
+Implementation Exercises (Choose One)
+
+Option A: Pokédex Manager (Continuing Project)
+
+Goal: Create a Pokedex class that manages all our BasePokemon objects, implementing collections, indexers, and iterators.
+
+Tasks:
+- Create a Pokedex class that implements the provided (IPokedex.cs) interface.
+- Implement the interface: Count and Indexer, Iterator, Add, Lookup method
+- Iterate through the Pokedex and display the pokemons
+Bonus:
+PC Storage Box: Create a BasePokemon[,] storageBox = new BasePokemon[6, 5]; and write a method to "deposit" a Pokémon at a specific (row, col).
+Battle Log: Create a Stack<string> in your main program. After your try-catch block, Push a message like "Attempted to find Mewthree" onto the stack. At the end, loop and Pop all messages to show the log in reverse order.
+Pokémon Daycare: Create a Queue<BasePokemon>. Enqueue two Pokémon. Then, Dequeue them and see that they come out in the same order.
+
+Option B: E-Commerce Shopping Cart (Standalone Project)
+Goal: Build a shopping cart app to manage products and orders.
+
+Tasks:
+- Define a Product class with properties like Id, Name, Price, and Quantity.
+- Use a collection to store product items in the cart.
+- Implement methods to add products, update quantities, remove products, and calculate totals.
+- Iterate over the cart items to print a summary with prices.
+- Allow searching products by name (simple linear search).
+- Implement an indexer to retrieve a specific item from the shopping cart.
+
+Option C: Movie Collection Organizer (Standalone Project)
+Goal: Create an app to manage a personal movie collection.
+
+Tasks:
+- Create a Movie class with Title, Director, ReleaseYear, and Genres.
+- Store movies in a List<Movie>.
+- Implement methods to add and remove movies.
+- Implement search methods to find movies by director or year.
+- Use iteration to display the full movie list formatted properly.
+- Implement an indexer to retrieve a specific movie from the list.
+
+Presentation
+---
+https://gamma.app/docs/Lab-5-Deep-Dive-into-C-Arrays-Collections-and-Iterators-cgpnnd2f8cuyud6
