@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 // An interface defining the contract for our Pokedex
 public interface IPokedex : IEnumerable<BasePokemon>
 {
