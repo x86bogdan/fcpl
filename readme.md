@@ -112,3 +112,78 @@ Tasks:
 Presentation
 ---
 https://gamma.app/docs/Lab-5-Deep-Dive-into-C-Arrays-Collections-and-Iterators-cgpnnd2f8cuyud6
+
+
+Lab 6
+===
+Implementation Exercises (Choose One)
+
+Option A: The Reactive Pokédex (Continuing Project)
+
+Goal: Make your Pokedex class "broadcast" an event whenever a new Pokémon is added, and create a separate "Logger" class to listen for it.
+Your Provided Interface (IPokedex):
+- You will add an event to your IPokedex interface from Lab 5. ``` event Action<BasePokemon> PokemonAdded; ```
+
+Tasks:
+- Implement the Event: In your Pokedex class, add the public event: ``` public event Action<BasePokemon> PokemonAdded; ```
+- Fire the Event: In your Pokedex.Add method, after you successfully add a Pokémon (and after checking that it's not a duplicate), "fire" the event. The C# syntax for this is:
+```
+// Fire the event. The '?' checks if anyone is subscribed.
+PokemonAdded?.Invoke(pokemon);
+```
+- Create the "Listener": Create a new class called PokedexLogger. Its constructor should take an IPokedex as a parameter. In the constructor, subscribe to the event: ``` pokedex.PokemonAdded += OnPokemonAdded; ```
+- Create the "Handler": Inside PokedexLogger, create the method that will handle the event. Its signature must match the Action<BasePokemon> delegate.
+```
+private void OnPokemonAdded(BasePokemon pokemon)
+{
+    Console.WriteLine($"[LOGGER] - {pokemon.Name.ToUpper()} was added to the Pokédex!");
+}
+```
+- Test in Program.cs:
+  - First, create your Pokedex object.
+  - Then, create your PokedexLogger object, passing the Pokedex to its constructor.
+  - Now, when you call myPokedex.Add(pikachu) and myPokedex.Add(mewtwo), you should automagically see the logger's messages appear in the console!
+
+
+Option B: The "Discord Bot" Simulator (Standalone Project)
+
+Goal: Create an "Input Reader" (the bot) that broadcasts events, and two "Listeners" (bot modules) that react to specific commands.
+
+Your Provided Interface (IInputReader):
+```
+using System;
+
+// The contract for our "Bot"
+public interface IInputReader
+{
+    // The event that fires on every new line of input
+    event Action<string> OnInputReceived;
+
+    // A method to start the bot
+    void StartListening();
+}
+```
+
+Tasks:
+- Create the InputReader (The Publisher):
+  - Create a class InputReader that implements IInputReader.
+  - Implement the StartListening() method. It should contain a while(true) loop that reads input from the console (Console.ReadLine()).
+  - Inside the loop, after reading a line, fire the event: OnInputReceived?.Invoke(input);
+- Create CommandLogger (Listener 1):
+  - Create a class CommandLogger.
+  - Its constructor should take an IInputReader and subscribe: reader.OnInputReceived += OnInput;
+  - The OnInput handler method should just print: [LOG]: User typed: {input}.
+- Create GreeterModule (Listener 2):
+  - Create a class GreeterModule.
+  - Its constructor should also take an IInputReader and subscribe: reader.OnInputReceived += OnInput;
+  - The OnInput handler method should check the input: if (input.ToLower() == "hello") { ... } and print a greeting, starting with [GREET].
+- Test in Program.cs:
+  - Create one InputReader object.
+  - Create one CommandLogger object, passing the InputReader to it.
+  - Create one GreeterModule object, also passing the same InputPlayer.
+  - Call myInputReader.StartListening().
+- Test by typing "hello" in your console. You should see both the log message and the greeting message appear. This shows how multiple, separate objects can all listen to the same event.
+
+Presentation
+---
+https://gamma.app/docs/Lab-6-Delegates-Events-f5aay9w3bt0qwn2
