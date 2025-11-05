@@ -187,3 +187,7 @@ Tasks:
 Presentation
 ---
 https://gamma.app/docs/Lab-6-Delegates-Events-f5aay9w3bt0qwn2
+
+Feedback form
+---
+https://forms.gle/f4mwBHt4fzeveikQ7
