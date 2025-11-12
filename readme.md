@@ -191,3 +191,129 @@ https://gamma.app/docs/Lab-6-Delegates-Events-f5aay9w3bt0qwn2
 Feedback form
 ---
 https://forms.gle/f4mwBHt4fzeveikQ7
+
+Lab 7
+===
+Implementation Exercises (Choose One)
+
+Option A: The Pokédex Data Analyst
+
+Prerequisite: Your IPokedex collection from Lab 5. Ensure your BasePokemon class has queryable properties (e.g., Type1 (string), Attack (int), IsLegendary (bool)).
+
+Tasks:
+- Find all Pokémon of a specific type:
+```
+var firePokemon = myPokedex.Where(p => p.Type1 == "fire");
+```
+- Loop and display the names of the results.
+- Find the single strongest Pokémon:
+```
+var strongest = myPokedex.OrderByDescending(p => p.Attack).FirstOrDefault();
+```
+- Display this Pokémon's name and attack stat.
+- Get just the names of all Legendary Pokémon:
+```
+var legendaryNames = myPokedex.Where(p => p.IsLegendary).Select(p => p.Name);
+```
+- Loop and display the names (they will be strings, not Pokémon objects).
+- Check if a "water" type Pokémon exists:
+```
+bool hasWater = myPokedex.Any(p => p.Type1 == "water");
+```
+- Print the true/false result.
+- Calculate the average weight of all Pokémon:
+```
+double avgWeight = myPokedex.Average(p => p.Weight);
+```
+- Print the result.
+
+Option B: The Game Store Manager (Standalone Project)
+
+Goal: Create a GameStore app and use LINQ to query its inventory.
+Your Provided Classes (Game.cs, IGameStore.cs):
+```
+using System;
+using System.Collections.Generic;
+
+public enum Genre { Action, RPG, Strategy, Puzzle }
+
+public class Game
+{
+    public string Name { get; set; }
+    public string Developer { get; set; }
+    public Genre GameGenre { get; set; }
+    public DateTime ReleaseDate { get; set; }
+    public double Price { get; set; }
+}
+
+public interface IGameStore
+{
+    List<Game> Games { get; }
+    void AddGame(Game game);
+
+    // --- Methods you will implement using LINQ ---
+    List<Game> GetGamesByDeveloper(string developer);
+    List<string> GetGameNamesReleasedBefore(int year);
+    Game GetMostExpensiveGame();
+    bool AnyGamesFromDeveloper(string developer);
+    double GetAveragePriceForGenre(Genre genre);
+}
+```
+
+Tasks:
+
+- Create a GameStore class that implements IGameStore. The Games property will be a List<Game>. AddGame just adds to the list.
+- In your Program.cs, create a GameStore and add 5-10 sample Game objects with different developers, prices, and genres.
+- Implement the Interface Methods using LINQ: Your job is to implement each of the 5 query methods in the interface using a single line of LINQ.
+- GetGamesByDeveloper: Use .Where()
+- GetGameNamesReleasedBefore: Use .Where() and .Select()
+- GetMostExpensiveGame: Use .OrderByDescending() and .FirstOrDefault()
+- AnyGamesFromDeveloper: Use .Any()
+- GetAveragePriceForGenre: Use .Where() and .Average()
+- In Program.cs, call each of your new methods and print the results to the console to prove they work.
+
+Option C: The Social Media Feed Analyzer (Standalone Project)
+
+Goal: Create a SocialFeed app and use LINQ to query a list of posts.
+Your Provided Classes (Post.cs, ISocialFeed.cs):
+```
+using System;
+using System.Collections.Generic;
+
+public class Post
+{
+    public int PostId { get; set; }
+    public string Author { get; set; }
+    public string Text { get; set; }
+    public int Likes { get; set; }
+    public List<string> Tags { get; set; }
+}
+
+public interface ISocialFeed
+{
+    List<Post> Posts { get; }
+    void AddPost(Post post);
+
+    // --- Methods you will implement using LINQ ---
+    List<Post> GetPostsByAuthor(string author);
+    List<Post> GetPopularPosts(int minLikes);
+    List<string> GetAllUniqueTags();
+    Post GetPostById(int id);
+    double GetAverageLikesForAuthor(string author);
+}
+```
+
+Tasks:
+- Create a SocialFeed class that implements ISocialFeed. The Posts property will be a List<Post>. AddPost just adds to the list.
+- In your Program.C#, create a SocialFeed and add 5-10 sample Post objects. Be sure to include multiple posts from the same author and duplicate tags.
+- Implement the Interface Methods using LINQ:
+- GetPostsByAuthor: Use .Where()
+- GetPopularPosts: Use .Where(p => p.Likes >= minLikes)
+- GetAllUniqueTags: Use .SelectMany(p => p.Tags) to flatten the list of lists, then .Distinct() to get unique tags.
+- GetPostById: Use .FirstOrDefault(p => p.PostId == id)
+- GetAverageLikesForAuthor: Use .Where() to get the author's posts, then .Average(p => p.Likes)
+- In Program.cs, call each of your new methods and print the results to the console.
+
+Presentation
+---
+https://gamma.app/docs/Lab-9-LINQ-The-Super-Search-for-Your-Data-cdvl0lvnaekmx56
