@@ -317,3 +317,135 @@ Tasks:
 Presentation
 ---
 https://gamma.app/docs/Lab-9-LINQ-The-Super-Search-for-Your-Data-cdvl0lvnaekmx56
+
+Lab 8
+===
+Lab 7: Implementation Exercises (Choose One)
+
+Option A: The Persistent Pokédex (Continuing Project)
+
+Goal: Make your Pokedex class save/load to a file asynchronously and add support for task cancellation.
+
+Tasks:
+- Create PokedexPersistence.cs: Create a static class for saving/loading.
+- Implement SavePokedexAsync:
+```
+public static async Task SavePokedexAsync(IPokedex pokedex, string filename, CancellationToken token)
+```
+Inside, serialize the pokedex. Use ```await File.WriteAllTextAsync(filename, jsonString, token);``` (Notice we pass the token!). Wrap in a try-catch block.
+- Implement LoadPokedexAsync:
+```
+public static async Task<IPokedex> LoadPokedexAsync(string filename, CancellationToken token)
+```
+Inside try, use ```string jsonString = await File.ReadAllTextAsync(filename, token);
+
+return JsonSerializer.Deserialize<Pokedex>(jsonString);
+
+In a catch (FileNotFoundException), return new Pokedex();.
+
+In a catch (TaskCanceledException), print "Load canceled!" and return new Pokedex();.
+
+Update Program.cs:
+
+Make Main async Task.
+
+Create a CancellationTokenSource: var cts = new CancellationTokenSource();
+
+Call IPokedex myPokedex = await PokedexPersistence.LoadPokedexAsync(saveFile, cts.Token);
+
+(Demo Cancellation): To test it, you can add this line right after the LoadPokedexAsync call: cts.CancelAfter(TimeSpan.FromMilliseconds(100)); This will simulate a "timeout" and cancel the load if it takes longer than 100ms.
+
+At the end of your program, save the Pokédex.
+
+Option B: The Digital Recipe Book (Standalone Project)
+
+Goal: Create a console-based Recipe Book that can save and load your recipes asynchronously.
+
+Your Provided Models (Recipe.cs, IRecipeBook.cs):
+```
+public class Recipe
+{
+    public string Title { get; set; }
+    public List<string> Ingredients { get; set; } = new();
+    public string Instructions { get; set; }
+}
+
+public interface IRecipeBook
+{
+    void AddRecipe(Recipe recipe);
+    void ListAllRecipes();
+    Recipe FindRecipe(string title);
+    List<Recipe> AllRecipes { get; }
+}
+```
+
+Tasks:
+
+- Create RecipeBook.cs: Implement the IRecipeBook interface using a List<Recipe> internally. ListAllRecipes should just print the titles. FindRecipe can use LINQ.
+- Create RecipePersistence.cs: Create a static class to save/load the IRecipeBook (similar to Option A).
+- public static async Task SaveAsync(IRecipeBook book, string filename)
+- public static async Task<IRecipeBook> LoadAsync(string filename)
+- Implement these using JsonSerializer and the async file methods.
+- Create Program.cs:
+
+Make Main async Task.
+```
+IRecipeBook myBook = await RecipePersistence.LoadAsync("recipes.json");
+```
+- Create a while loop with commands: "add", "list", "find [name]", "exit".
+- "exit" command must call await RecipePersistence.SaveAsync(myBook, "recipes.json"); before breaking the loop.
+
+Option C: The Async Tamagotchi (Standalone Project)
+
+Goal: Create a virtual pet that "lives" in real-time using async methods and "reacts" to input using events (from Lab 6).
+
+Tasks:
+
+- Create InputReader.cs: (From Lab 6)
+- This class has an event Action<string> OnKeyPressed;
+- It has one method public void StartListening() that runs a while(true) loop, reads console input, and fires the OnKeyPressed event with the input.
+- Create Tamagotchi.cs:
+
+Properties: Name (string), Food (int, default 10), HungerRate (int, e.g., 3000 ms), Alive (bool, default true), Key (char).
+
+Constructor: public Tamagotchi(string name, char key, InputReader reader)
+
+Subscribe to Event: In the constructor, subscribe to the input reader's event: reader.OnKeyPressed += HandleKeyPressed;
+
+Event Handler: private void HandleKeyPressed(string input): If input matches the Key, add 5 to Food and print a "Fed!" message.
+
+The async "Life" Method:
+
+Create public async Task Run()
+
+This method should have a while (this.Alive) loop.
+
+Inside the loop:
+
+await Task.Delay(this.HungerRate); (This is the non-blocking "wait" for time to pass).
+
+this.Food -= 3;
+
+Console.WriteLine(this.ToString()); (Display status).
+
+Check for death: if (this.Food <= 0 || this.Food > 20) { this.Alive = false; }
+
+ToString() Method: Override ToString() to display the pet's status (alive/dead and food level).
+
+Create Program.cs:
+
+InputReader reader = new InputReader();
+
+Tamagotchi pet1 = new Tamagotchi("Pikachu", 'p', reader);
+
+Run both tasks in parallel!
+
+Task inputTask = Task.Run(() => reader.StartListening()); (Run the input listener on a background thread)
+
+Task petTask = pet1.Run(); (Run the pet's life)
+
+await Task.WhenAll(inputTask, petTask); (Wait for both to finish... though inputTask won't).
+
+Presentation
+---
+https://gamma.app/docs/Lab-8-Persistence-asyncawait-and-Task-Control-684jo01o6gcpvvc
