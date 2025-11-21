@@ -320,7 +320,7 @@ https://gamma.app/docs/Lab-9-LINQ-The-Super-Search-for-Your-Data-cdvl0lvnaekmx56
 
 Lab 8
 ===
-Lab 7: Implementation Exercises (Choose One)
+Implementation Exercises (Choose One)
 
 Option A: The Persistent Pokédex (Continuing Project)
 
@@ -337,7 +337,7 @@ Inside, serialize the pokedex. Use ```await File.WriteAllTextAsync(filename, jso
 ```
 public static async Task<IPokedex> LoadPokedexAsync(string filename, CancellationToken token)
 ```
-Inside try, use ```string jsonString = await File.ReadAllTextAsync(filename, token);
+Inside try, use ```string jsonString = await File.ReadAllTextAsync(filename, token);```
 
 return JsonSerializer.Deserialize<Pokedex>(jsonString);
 
@@ -345,17 +345,12 @@ In a catch (FileNotFoundException), return new Pokedex();.
 
 In a catch (TaskCanceledException), print "Load canceled!" and return new Pokedex();.
 
-Update Program.cs:
-
-Make Main async Task.
-
-Create a CancellationTokenSource: var cts = new CancellationTokenSource();
-
-Call IPokedex myPokedex = await PokedexPersistence.LoadPokedexAsync(saveFile, cts.Token);
-
-(Demo Cancellation): To test it, you can add this line right after the LoadPokedexAsync call: cts.CancelAfter(TimeSpan.FromMilliseconds(100)); This will simulate a "timeout" and cancel the load if it takes longer than 100ms.
-
-At the end of your program, save the Pokédex.
+- Update Program.cs:
+- Make Main async Task.
+- Create a CancellationTokenSource: var cts = new CancellationTokenSource();
+- Call IPokedex myPokedex = await PokedexPersistence.LoadPokedexAsync(saveFile, cts.Token);
+- (Demo Cancellation): To test it, you can add this line right after the LoadPokedexAsync call: cts.CancelAfter(TimeSpan.FromMilliseconds(100)); This will simulate a "timeout" and cancel the load if it takes longer than 100ms.
+- At the end of your program, save the Pokédex.
 
 Option B: The Digital Recipe Book (Standalone Project)
 
@@ -387,8 +382,7 @@ Tasks:
 - public static async Task<IRecipeBook> LoadAsync(string filename)
 - Implement these using JsonSerializer and the async file methods.
 - Create Program.cs:
-
-Make Main async Task.
+- Make Main async Task.
 ```
 IRecipeBook myBook = await RecipePersistence.LoadAsync("recipes.json");
 ```
@@ -405,46 +399,31 @@ Tasks:
 - This class has an event Action<string> OnKeyPressed;
 - It has one method public void StartListening() that runs a while(true) loop, reads console input, and fires the OnKeyPressed event with the input.
 - Create Tamagotchi.cs:
+- Properties: Name (string), Food (int, default 10), HungerRate (int, e.g., 3000 ms), Alive (bool, default true), Key (char).
+- Constructor: public Tamagotchi(string name, char key, InputReader reader)
+- Subscribe to Event: In the constructor, subscribe to the input reader's event: reader.OnKeyPressed += HandleKeyPressed;
+- Event Handler: private void HandleKeyPressed(string input): If input matches the Key, add 5 to Food and print a "Fed!" message.
 
-Properties: Name (string), Food (int, default 10), HungerRate (int, e.g., 3000 ms), Alive (bool, default true), Key (char).
-
-Constructor: public Tamagotchi(string name, char key, InputReader reader)
-
-Subscribe to Event: In the constructor, subscribe to the input reader's event: reader.OnKeyPressed += HandleKeyPressed;
-
-Event Handler: private void HandleKeyPressed(string input): If input matches the Key, add 5 to Food and print a "Fed!" message.
-
-The async "Life" Method:
-
+- The async "Life" Method:
 Create public async Task Run()
-
 This method should have a while (this.Alive) loop.
-
-Inside the loop:
-
+- Inside the loop:
+```
 await Task.Delay(this.HungerRate); (This is the non-blocking "wait" for time to pass).
-
 this.Food -= 3;
-
 Console.WriteLine(this.ToString()); (Display status).
-
 Check for death: if (this.Food <= 0 || this.Food > 20) { this.Alive = false; }
-
 ToString() Method: Override ToString() to display the pet's status (alive/dead and food level).
-
-Create Program.cs:
-
+```
+- Create Program.cs:
 InputReader reader = new InputReader();
-
 Tamagotchi pet1 = new Tamagotchi("Pikachu", 'p', reader);
-
-Run both tasks in parallel!
-
+- Run both tasks in parallel!
+```
 Task inputTask = Task.Run(() => reader.StartListening()); (Run the input listener on a background thread)
-
 Task petTask = pet1.Run(); (Run the pet's life)
-
 await Task.WhenAll(inputTask, petTask); (Wait for both to finish... though inputTask won't).
+```
 
 Presentation
 ---
