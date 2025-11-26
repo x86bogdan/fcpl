@@ -428,3 +428,75 @@ await Task.WhenAll(inputTask, petTask); (Wait for both to finish... though input
 Presentation
 ---
 https://gamma.app/docs/Lab-8-Persistence-asyncawait-and-Task-Control-684jo01o6gcpvvc
+
+Lab 9
+===
+
+Option A: The Visual Pokédex (Continuing Project)
+
+Goal: Build a GUI viewer for your JSON Pokédex.
+
+UI Layout (XAML):
+- A 2-Column Grid.
+- Left: A ListBox to show the list of Pokémon names.
+- Right: A StackPanel showing the details of the selected Pokémon (Large Name, Type, Stats).
+
+Tasks:
+- Create PokedexViewModel.cs inheriting from BaseViewModel.
+- Add an ObservableCollection<BasePokemon> AllPokemon { get; }.
+- Load your pokedex.json data into this collection in the constructor.
+- Add a property BasePokemon SelectedPokemon (use the SetProperty helper!).
+- Binding: Bind ListBox.ItemsSource to AllPokemon. Bind ListBox.SelectedItem to SelectedPokemon. Bind the right-side text blocks to SelectedPokemon.Name, SelectedPokemon.Type, etc.
+- Result: Clicking a name in the list instantly updates the details panel.
+
+Option B: The "Pizza Builder" (Standalone Project)
+
+Goal: Create an order form that dynamically calculates the price of a pizza based on user selection.
+
+UI Layout (XAML):
+- Header: "Mario's Pizza Builder" (Large Text).
+- Size: A ComboBox or 3 RadioButtons (Small, Medium, Large).
+- Toppings: CheckBoxes for "Pepperoni (+$2)", "Mushrooms (+$1)", "Extra Cheese (+$2)".
+- Footer: A large text block: "Total Price: $15.00".
+
+Tasks:
+- Create PizzaViewModel.cs inheriting from BaseViewModel.
+- Create bool properties for toppings: IsPepperoni, IsMushrooms, IsExtraCheese. Important: Inside the set for these, call OnPropertyChanged(nameof(TotalPrice))!
+- Create a decimal property BasePrice (default to 10.00).
+- Create a Calculated Property TotalPrice:
+```
+public decimal TotalPrice
+{
+    get
+    {
+        decimal total = BasePrice;
+        if (IsPepperoni) total += 2;
+        if (IsMushrooms) total += 1;
+        if (IsExtraCheese) total += 2;
+        return total;
+    }
+}
+```
+- Binding: Bind the CheckBoxes to the bool properties. Bind the Footer TextBlock to TotalPrice (use StringFormat in XAML or format it in the ViewModel).
+- Result: As you check and uncheck boxes, the price updates instantly without clicking a "Calculate" button.
+
+Option C: The "Smart Home" Dashboard (Standalone Project)
+
+Goal: A dashboard to control lights and temperature in a house.
+
+UI Layout (XAML):
+- Living Room: A Slider for Light Brightness (0-100) and a TextBlock showing the %.
+- Thermostat: Two Buttons ("+" and "-") and a large number showing the temperature.
+- System Status: A colored Rectangle (Green = OK, Red = Alert).
+
+Tasks:
+- Create DashboardViewModel.cs inheriting from BaseViewModel.
+- Brightness: Create an int Brightness property. Bind the Slider.Value to it. Bind the TextBlock.Text to it.
+- Temperature: Create a double Temperature property (default 70).
+- Commands (Buttons): Create methods void IncreaseTemp() and void DecreaseTemp().
+Note: To bind Buttons in MVVM, you typically use ICommand. For this lab, it is acceptable to use Click event handlers in the code-behind (.xaml.cs) that simply call methods on your ViewModel: ((DashboardViewModel)DataContext).IncreaseTemp();.
+- Logic: If Temperature goes above 80, set a StatusColor property to "Red". Otherwise "Green". Bind the Rectangle's Fill to this color string.
+
+Presentation
+---
+https://gamma.app/docs/Giving-Your-Code-a-Face-xkmfnq3su89kqgc
