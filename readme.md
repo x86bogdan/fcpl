@@ -500,3 +500,104 @@ Note: To bind Buttons in MVVM, you typically use ICommand. For this lab, it is a
 Presentation
 ---
 https://gamma.app/docs/Giving-Your-Code-a-Face-xkmfnq3su89kqgc
+
+Lab 10
+===
+Option A: The Pokédex API (Continuing Project)
+
+Goal: Expose your Pokedex data from Lab 7 to the world.
+
+Tasks:
+- Migrate Logic: Copy your BasePokemon, Pokedex, and Persistence files into the new project.
+- State Management: In Program.cs, load the data once before the app builds.
+```
+string saveFile = "pokedex.json"; // On Linux, ensure this path is writable!
+IPokedex pokedex = await PokedexPersistence.LoadPokedexAsync(saveFile);
+var builder = WebApplication.CreateBuilder(args);
+// ...
+```
+- Implement endpoints
+```
+GET Endpoint: app.MapGet("/api/pokemon", () => Results.Ok(pokedex));
+
+GET Single: app.MapGet("/api/pokemon/{name}", (string name) => { ...linq search... });
+
+POST Endpoint (New!): Allow adding Pokémon via the API.
+
+app.MapPost("/api/pokemon", (StandardPokemon newPoke) => {
+    pokedex.Add(newPoke);
+    // In a real app, we would save to disk here too
+    return Results.Created($"/api/pokemon/{newPoke.Name}", newPoke);
+});
+```
+
+Option B: Space Mission Control (Standalone)
+
+Goal: Build the backend for a rocket launch facility. Manage missions and their status.
+
+Tasks:
+- Create Model: public record Mission(int Id, string Name, string Destination, DateTime LaunchDate) { public string Status { get; set; } = "Scheduled"; }
+- Create "Database":
+```
+var missions = new List<Mission> {
+    new Mission(1, "Artemis I", "Moon", DateTime.Now.AddDays(100)),
+    new Mission(2, "Voyager 3", "Mars", DateTime.Now.AddYears(2))
+};
+```
+- Implement endpoints
+```
+GET All: app.MapGet("/api/missions", () => missions);
+
+POST (Schedule Launch): Create an endpoint that accepts a Mission object, adds it to the list, and returns it.
+
+PUT (Update Status): Create an endpoint to update a mission's status (e.g., "Launched", "Aborted").
+
+app.MapPut("/api/missions/{id}/status", (int id, string newStatus) => {
+    var mission = missions.FirstOrDefault(m => m.Id == id);
+    if (mission == null) return Results.NotFound();
+    mission.Status = newStatus;
+    return Results.Ok(mission);
+});
+```
+
+Option C: The Digital Bookstore (Standalone)
+
+Goal: Create a simple backend for a bookstore with search capabilities.
+
+Tasks:
+- Create Model: ```public class Book { public int Id { get; set; } public string Title { get; set; } public string Author { get; set; } public double Price { get; set; } }```
+- Database: Create a static List<Book> with sample data.
+- Search Endpoint: Create an endpoint /api/books/search that accepts an author query parameter.
+```
+app.MapGet("/api/books/search", (string author) => {
+     return db.Where(b => b.Author.Contains(author, StringComparison.OrdinalIgnoreCase));
+});
+```
+- Price Filter: Create an endpoint /api/books/bargains that returns all books under a specific price (passed as a parameter).
+
+Option D: The Music Streaming Backend (Standalone)
+
+Goal: Build the API for a Spotify clone. Manage songs and track play counts.
+
+Tasks:
+- Create Model: ```public class Song { public int Id { get; set; } public string Title { get; set; } public string Artist { get; set; } public int Streams { get; set; } }```
+- Database: Create a List<Song> with some hits.
+- Implement endpoints
+```
+GET (Catalog): Return all songs, ordered by Streams (descending).
+
+PUT (Play Song): Create an endpoint that simulates a user listening to a song. It should increment the Streams counter.
+
+app.MapPut("/api/songs/{id}/play", (int id) => {
+    var song = db.FirstOrDefault(s => s.Id == id);
+    if (song is null) return Results.NotFound();
+    song.Streams++;
+    return Results.Ok(new { Message = $"Now playing {song.Title}", NewStreamCount = song.Streams });
+});
+
+DELETE (Remove Song): Create an endpoint to delete a song by ID (e.g., for copyright takedowns). db.RemoveAll(s => s.Id == id);
+```
+
+Presentation
+---
+https://gamma.app/docs/Building-a-Web-API-0anv24vyv5m1af2
