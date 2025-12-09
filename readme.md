@@ -601,3 +601,97 @@ DELETE (Remove Song): Create an endpoint to delete a song by ID (e.g., for copyr
 Presentation
 ---
 https://gamma.app/docs/Building-a-Web-API-0anv24vyv5m1af2
+
+
+Lab 11
+===
+Option A: The Pokedex Database (Continuing Project)
+
+Goal: Migrate your Pokédex from JSON to SQLite and add "Trainers."
+
+Tasks:
+- Define Model: Create Pokemon and Trainer classes. Trainer should have a List<Pokemon>.
+- The Context:
+```
+Create a class PokedexContext : DbContext.
+Add public DbSet<Pokemon> Pokemons { get; set; }
+Add public DbSet<Trainer> Trainers { get; set; }
+```
+- Override OnConfiguring to set the data source: ```options.UseSqlite("Data Source=pokedex.db");```
+- Migration: Run the command ```dotnet ef migrations add InitialCreate``` and then ```dotnet ef database update```. This creates the .db file.
+- Insert Data:
+```
+Create a new Trainer ("Ash").
+Add a new Pokemon ("Pikachu") to Ash's list.
+db.Trainers.Add(ash);
+db.SaveChanges(); (This generates the SQL INSERTs).
+```
+- Query Data: Use ```db.Trainers.Include(t => t.Team).First(t => t.Name == "Ash").```
+- Print Ash's name and all his Pokémon. The .Include() is crucial—it tells EF to do a SQL JOIN to get the related data.
+
+Option B: The Blogging Platform (Standalone)
+
+Goal: Create a system for Blogs and Posts (Classic 1-to-Many example).
+
+Tasks:
+- Define Model:
+```
+Blog: int BlogId, string Url, List<Post> Posts.
+Post: int PostId, string Title, string Content, int BlogId (Foreign Key).
+```
+- The Context: Create ```BloggingContext``` with ```DbSet<Blog>``` and ```DbSet<Post>```. Configure for SQLite.
+- Migration: Run ```dotnet ef migrations add InitialCreate``` and ```dotnet ef database update```.
+- Functionality:
+```
+Create: Ask user for a Blog URL. Save it.
+Add Post: Ask user for a Blog ID and Post Title. Find the blog, add the post, SaveChanges().
+List: List all Blogs.
+View Blog: User types a Blog ID. You fetch the blog AND its posts (.Include(b => b.Posts)). Display them.
+```
+- Update: Allow the user to "edit" a post title. Fetch it, change the property, and call SaveChanges(). EF Core detects the change automatically!
+
+Option C: The Inventory System (Standalone)
+
+Goal: A Product/Category manager for a store.
+
+Tasks:
+- Define Model:
+```
+Category: int Id, string Name, List<Product> Products.
+Product: int Id, string Name, decimal Price, Category Category.
+```
+- Setup: Setup StoreContext, SQLite, and run Migrations.
+```
+Seed Data: In Program.cs, check if (!db.Categories.Any()). If true, create some default categories (Electronics, Clothing) and Products.
+```
+- Reporting Queries (LINQ to SQL):
+```
+Price Check: Find all products over $50: db.Products.Where(p => p.Price > 50).
+Category Count: Count how many products are in "Electronics".
+Delete: Find a product by name and remove it: db.Remove(product); db.SaveChanges();.
+```
+
+Option D: The Project Tracker (Standalone)
+
+Goal: Build a "Jira-lite" system to track Projects and their Tickets (Bugs/Tasks).
+
+Tasks:
+- Define Model:
+```
+Project: int Id, string Name, string Code (e.g., "DEV"), List<Ticket> Tickets.
+Ticket: int Id, string Title, string Status (New, InProgress, Done), Project Project.
+```
+- The Context: Create TrackerContext. Configure SQLite.
+- Migration: Run the standard migration commands to build the database.
+- Functionality:
+```
+New Project: Create a project "Website Redesign" with code "WEB".
+Add Ticket: Add a ticket "Fix Login Bug" to the "WEB" project.
+Move Ticket: Find a ticket by ID. Change its status from "New" to "Done". Call SaveChanges().
+```
+- LINQ Reporting: Print a report showing the Count of open tickets (Status != "Done") for each Project.
+Hint: ```db.Projects.Select(p => new { p.Name, OpenCount = p.Tickets.Count(t => t.Status != "Done") })```.
+
+Presentation
+---
+https://gamma.app/docs/The-Data-Layer-Databases-ORMs-and-Relationships-ey7knzpty84pb9t
