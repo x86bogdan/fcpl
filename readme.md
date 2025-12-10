@@ -692,6 +692,8 @@ Move Ticket: Find a ticket by ID. Change its status from "New" to "Done". Call S
 - LINQ Reporting: Print a report showing the Count of open tickets (Status != "Done") for each Project.
 Hint: ```db.Projects.Select(p => new { p.Name, OpenCount = p.Tickets.Count(t => t.Status != "Done") })```.
 
+https://learn.microsoft.com/en-us/ef/core/cli/dotnet
+
 Presentation
 ---
 https://gamma.app/docs/The-Data-Layer-Databases-ORMs-and-Relationships-ey7knzpty84pb9t
