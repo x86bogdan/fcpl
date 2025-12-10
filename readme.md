@@ -694,6 +694,15 @@ Hint: ```db.Projects.Select(p => new { p.Name, OpenCount = p.Tickets.Count(t => 
 
 https://learn.microsoft.com/en-us/ef/core/cli/dotnet
 
+```
+Install-Package Microsoft.EntityFrameworkCore.Tools - version 9.0.11
+
+Add-Migration Intial migration
+
+Update-Database
+
+```
+
 Presentation
 ---
 https://gamma.app/docs/The-Data-Layer-Databases-ORMs-and-Relationships-ey7knzpty84pb9t
