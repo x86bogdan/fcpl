@@ -609,6 +609,13 @@ Install Entity Frameworks tools for a particular version
 ```
 dotnet tool install --global dotnet-ef --version 9.0.11
 ```
+Configuring SQLite
+```
+protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+{
+    optionsBuilder.UseSqlite("Data Source=dbname.db");
+}
+```
 
 Option A: The Pokedex Database (Continuing Project)
 
