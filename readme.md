@@ -605,6 +605,11 @@ https://gamma.app/docs/Building-a-Web-API-0anv24vyv5m1af2
 
 Lab 11
 ===
+Install Entity Frameworks tools for a particular version
+```
+dotnet tool install --global dotnet-ef --version 9.0.11
+```
+
 Option A: The Pokedex Database (Continuing Project)
 
 Goal: Migrate your Pokédex from JSON to SQLite and add "Trainers."
