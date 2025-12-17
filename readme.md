@@ -718,3 +718,121 @@ Update-Database
 Presentation
 ---
 https://gamma.app/docs/The-Data-Layer-Databases-ORMs-and-Relationships-ey7knzpty84pb9t
+
+
+Lab 12
+====
+Implementation Exercises (Choose One)
+
+## Option A: The "Mod Loader" Architecture (Architect)
+
+**Goal:** Build a "Game" (Console App) that can load external abilities (DLLs) dropped into a folder, without recompiling the game. This is how games like Minecraft or Skyrim handle mods.
+
+### Tasks
+
+**1. The Contract (Shared Project)**  
+Create a Class Library project `Game.Shared`. Add an interface:
+```
+public interface IGameMod {
+    string Name { get; }
+    void RunMod();
+}
+```
+
+**2. The Mod (Class Library)**  
+Create a separate Class Library `SuperSpeedMod`.
+
+- Add a reference to `Game.Shared`.
+- Create a class `SpeedMod : IGameMod`.  
+- Implement `RunMod` to print `"Speed increased by 100%!"`.
+- Build this project.
+- Take the resulting `.dll` file and put it in a specific folder (e.g., `C:\Mods`).
+
+**3. The Loader (Console App)**  
+Create the main application.
+
+- Get all files in the mods folder:  
+  `Directory.GetFiles(path, "*.dll")`.
+- Load the assembly:  
+  `Assembly.LoadFrom(filePath)`.
+- Scan for types: Loop through `assembly.GetTypes()`.
+- Check compatibility:  
+  `type.IsAssignableTo(typeof(IGameMod))`.
+- Instantiate & Run:  
+  `Activator.CreateInstance(type)` and cast to `IGameMod`. Call `RunMod()`.
+
+**Result:** You can now create entirely new `.dll` files, drop them in the folder, and your program runs them without ever changing the main code!
+
+---
+
+## Option B: The "Object Spy" (Hacker)
+
+**Goal:** Create a tool that can inspect any object—even one with secrets—and print its internal state.
+
+### Tasks
+
+**1. The Target**  
+Create a class `SecretAgent`.
+
+- Private field: `private string _realName = "James Bond";`
+- Private field: `private int _killCount = 99;`
+- Public method:  
+```
+public void Introduce() => Console.WriteLine("I am just a normal civilian.");
+```
+
+**2. The Spy Tool**  
+Create a static method `Spy.Inspect(object obj)`.
+
+**3. Reflection Logic**
+
+- Get Type:  
+`var type = obj.GetType();`
+- Read Public Props: Loop `type.GetProperties()` and print values.
+- The Hack: Loop  
+`type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance)`.  
+Note: This requires `using System.Reflection;`.
+- Print the name and value of every private field using `field.GetValue(obj)`.
+
+**Bonus (Modify):**  
+Use `field.SetValue(obj, "Austin Powers")` to change the private name, then call the public method again to see if it worked.
+
+---
+
+## Option C: The "Test Runner" (Tool Builder)
+
+**Goal:** Build a clone of NUnit. Your program should find methods marked with a custom attribute and run them.
+
+### Tasks
+
+**1. The Attribute**  
+Create a simple class:
+```
+public class MyTestAttribute : Attribute {}
+```
+
+**2. The Test Suite**  
+Create a class `MathTests`.
+
+- Add methods like `TestAdd`, `TestSubtract`.
+- Mark some of them with `[MyTest]`.
+- Make one throw an exception to simulate failure.
+
+**3. The Runner**  
+In `Program.cs`, write a method that takes a `Type` (e.g., `typeof(MathTests)`).
+
+- Loop through `type.GetMethods()`.
+- Check `method.GetCustomAttribute<MyTestAttribute>() != null`.
+- If it exists, run it:  
+  `method.Invoke(instance, null)`.
+
+**4. Reporting**  
+Wrap the `Invoke` in a try-catch.
+
+- Print `"PASS"` (Green) if it runs.
+- Print `"FAIL"` (Red) if it catches an exception.
+
+
+Presentation
+---
+https://gamma.app/docs/Under-the-Hood-Reflection-IL-and-Reverse-Engineering-fnc2b52d8cg7483
